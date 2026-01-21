@@ -14,6 +14,14 @@ Este é uma API RESTful desenvolvida com Spring Boot, focada no gerenciamento de
 *   **Docker & Docker Compose**: Para containerização do banco de dados.
 *   **Maven**: Gerenciador de dependências e build.
 
+## 🏗️ Padrões de Projeto
+
+### 🔄 Data Transfer Objects (DTO)
+O projeto adota o padrão **DTO** para a transferência de dados entre a camada de controle e o cliente.
+*   **Segurança:** Previne a exposição acidental de dados sensíveis das entidades JPA.
+*   **Desacoplamento:** Separa a estrutura interna do banco de dados da API pública.
+*   **Java Records:** Utiliza a feature de Records do Java para criar DTOs imutáveis e concisos (ex: `ProdutoDTO`).
+
 ## ⚙️ Funcionalidades
 
 ### 🔐 Autenticação e Segurança
