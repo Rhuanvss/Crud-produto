@@ -32,7 +32,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         }
 
         String token = authHeader.substring(7);
-        String username = JwtUtil.extractUsername(token);
+        String username = null;
+        try {
+            username = JwtUtil.extractUsername(token);
+        } catch (Exception e) {
+            // Token inválido ou expirado, não faz nada e segue o fluxo sem autenticar
+        }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userdetails = userDetailsService.loadUserByUsername(username);

@@ -8,7 +8,8 @@ import java.security.Key;
 import java.util.Date;
 
 public class JwtUtil {
-    private static final Key key =Keys.secretKeyFor(SignatureAlgorithm.HS256);
+    private static final String SECRET = "MinhaChaveSecretaMuitoSeguraParaOProjetoSpringboot123"; // 32 chars+
+    private static final Key key = Keys.hmacShaKeyFor(SECRET.getBytes());
     private static final long EXPIRATION_TIME = 86400000; // 1 dia em milissegundos
     public static final String generateToken(String username){
         return Jwts.builder()
