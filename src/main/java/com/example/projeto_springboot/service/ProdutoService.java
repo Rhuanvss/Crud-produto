@@ -5,7 +5,6 @@ import com.example.projeto_springboot.repository.ProdutoRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ProdutoService {
@@ -20,8 +19,9 @@ public class ProdutoService {
         return produtoRepository.findAll();
     }
 
-    public Optional<Produto> buscarPorId(Long id) {
-        return produtoRepository.findById(id);
+    public Produto buscarPorId(Long id) {
+        return produtoRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Produto não encontrado com ID: " + id));
     }
 
     public Produto salvarProduto(Produto produto) {
@@ -29,6 +29,9 @@ public class ProdutoService {
     }
 
     public void deletarProduto(Long id) {
+        if (!produtoRepository.existsById(id)) {
+            throw new RuntimeException("Produto não encontrado com ID: " + id);
+        }
         produtoRepository.deleteById(id);
     }
 }
