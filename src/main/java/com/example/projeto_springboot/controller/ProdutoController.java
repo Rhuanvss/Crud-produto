@@ -1,6 +1,7 @@
 package com.example.projeto_springboot.controller;
 
 import com.example.projeto_springboot.exceptions.RecursoNaoEncontradoException;
+import com.example.projeto_springboot.dto.ProdutoDTO;
 import com.example.projeto_springboot.model.Produto;
 import com.example.projeto_springboot.service.ProdutoService;
 import org.springframework.http.ResponseEntity;
@@ -18,14 +19,18 @@ public class ProdutoController {
     }
 
     @GetMapping("/listar")
-    public ResponseEntity<List<Produto>> listarProduto() {
-        List<Produto> produtos = produtoService.listarTodos();
+    public ResponseEntity<List<ProdutoDTO>> listarProduto() {
+        List<ProdutoDTO> produtos = produtoService.listarTodos().stream()
+                .map(this::toDTO)
+                .toList();
         return ResponseEntity.ok(produtos);
     }
 
     @PostMapping("/adicionar")
-    public Produto criarProduto(@RequestBody Produto produto) {
-        return produtoService.salvarProduto(produto);
+    public ResponseEntity<ProdutoDTO> criarProduto(@RequestBody ProdutoDTO produtoDTO) {
+        Produto produto = toEntity(produtoDTO);
+        Produto salvo = produtoService.salvarProduto(produto);
+        return ResponseEntity.ok(toDTO(salvo));
     }
 
     @DeleteMapping("/delete/{id}")
@@ -35,11 +40,23 @@ public class ProdutoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Produto> buscarProdutoPorId(@PathVariable Long id) {
+    public ResponseEntity<ProdutoDTO> buscarProdutoPorId(@PathVariable Long id) {
         Produto produto = produtoService.buscarPorId(id);
         if (produto == null) {
             throw new RecursoNaoEncontradoException("Produto com ID " + id + " não encontrado");
         }
-        return ResponseEntity.ok(produto);
+        return ResponseEntity.ok(toDTO(produto));
+    }
+
+    private ProdutoDTO toDTO(Produto produto) {
+        return new ProdutoDTO(produto.getId(), produto.getNome(), produto.getPreco());
+    }
+
+    private Produto toEntity(ProdutoDTO produtoDTO) {
+        Produto produto = new Produto();
+        produto.setId(produtoDTO.id());
+        produto.setNome(produtoDTO.nome());
+        produto.setPreco(produtoDTO.preco());
+        return produto;
     }
 }
